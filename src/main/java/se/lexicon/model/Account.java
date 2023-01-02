@@ -1,2 +1,4 @@
-package se.lexicon.model;public class Account {
+package se.lexicon.model;
+
+public class Account {
 }
