@@ -1,4 +1,4 @@
-package se.lexicon;
+package se.lexicon.dao;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import se.lexicon.config.AppConfig;
-import se.lexicon.dao.AccountDao;
 import se.lexicon.exception.DataNotFoundException;
 import se.lexicon.model.Account;
 
