@@ -3,6 +3,7 @@ package se.lexicon.dao.impl;
 import org.springframework.stereotype.Component;
 import se.lexicon.dao.AccountDao;
 import se.lexicon.dao.sequencer.AccountIdGenerator;
+import se.lexicon.exception.DataNotFoundException;
 import se.lexicon.model.Account;
 
 import java.util.ArrayList;
@@ -27,16 +28,14 @@ public class AccountDaoImpl implements AccountDao {
         Long accountId= AccountIdGenerator.generateAccountNumber();                  //generate
         account.setId(accountId);
         storage.add(account);                                                        //add to storage
-
-
         return account;                                                             //return
     }
 
     @Override
-    public Optional<Account> findById(Long id) {
-        if (id == null) throw new IllegalArgumentException("Account Id was null");
+    public Optional<Account> findById(Long accountId) {
+        if (accountId == null) throw new IllegalArgumentException("Account Id was null");
         return storage.stream()                                 //stream source
-                .filter(account -> account.getId().equals(id))  //use intermediate op to create a small stream
+                .filter(account -> account.getId().equals(accountId))  //use intermediate op to create a small stream
                 .findFirst();                                   //terminal op -> to make a result
 
         // stream method returns Optional -> we can move "return" in front of stream method
@@ -48,8 +47,32 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public void remove(Long aLong) {
-
-       // todo: implement it in the next lecture
+    public void remove(Long accountId) throws DataNotFoundException {
+      Optional<Account> accountToRemove = findById(accountId);
+      if (!accountToRemove.isPresent())throw new DataNotFoundException("Data not found Exception");
+      else storage.remove(accountToRemove.get());
     }
+
+    @Override
+    public void updateBalance(Account account)  throws DataNotFoundException{
+        //step1: validate the method parameter (account)
+
+        if (account==null)throw new IllegalArgumentException("Account data was null");
+        //step2: check the accountId
+        Optional<Account> optionalAccount = findById(account.getId());
+        if (!optionalAccount.isPresent())throw new DataNotFoundException("Data not found Exception");
+        //step3: update account
+        else storage.forEach(element -> {
+            if (element.getId().equals(account.getId())){
+                // when we compare 2 objects it is better to use .equals(), instead of ==
+                //== is used to compare primitive data types(ex int)
+
+                element.setBalance(account.getBalance());
+            }
+        });
+
+
+    }
+
+
 }
